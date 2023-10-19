@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class LabelController {
-    protected LabelRepository labelRepository = new LabelRepository("labels.json");
+    protected LabelRepository labelRepository = new LabelRepository("src/main/resources/labels.json");
 
     public void createLabel(int id, String name) {
         Label label = new Label(id, name, PostStatus.ACTIVE);

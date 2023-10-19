@@ -12,7 +12,7 @@ import view.PostView;
 import java.util.*;
 
 public class PostController {
-    protected PostRepository postRepository = new PostRepository("posts.json");
+    protected PostRepository postRepository = new PostRepository("src/main/resources/posts.json");
     protected PostView postView = new PostView();
     protected  PostController postController;
 
