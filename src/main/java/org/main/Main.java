@@ -1,8 +1,5 @@
 package org.main;
 
-
-
-
 import static controller.GeneralController.activateGeneralController;
 
 
