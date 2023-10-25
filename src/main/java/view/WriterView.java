@@ -8,27 +8,18 @@ import java.util.List;
 public class WriterView {
 
 
-    public void showAllWriters(List<Writer> writers) {
-        try {
-            if (writers.isEmpty()) {
-                System.out.println("No writers found.");
-            } else {
-                System.out.println("Список всех писателей:");
-                for (Writer writer : writers) {
-                    System.out.println("ID: " + writer.getId());
-                    System.out.println("Имя: " + writer.getFirstName());
-                    System.out.println("Фамилия: " + writer.getLastName());
-                    System.out.println("Статус: " + writer.getStatus());
-                    System.out.println();
-                }
-            }
-        }catch (NullPointerException n){
-            System.out.println("Writers отсутствуют");
+    public void showAllWriters(List<Writer> writers) throws NullPointerException {
+        System.out.println("Список всех писателей:");
+        for (Writer writer : writers) {
+            System.out.println("ID: " + writer.getId());
+            System.out.println("Имя: " + writer.getFirstName());
+            System.out.println("Фамилия: " + writer.getLastName());
+            System.out.println("Статус: " + writer.getStatus());
+            System.out.println();
         }
-
     }
 
-    public void showWriter(Writer writer) {
+    public void showWriter(Writer writer) throws NullPointerException {
         System.out.println("Информация о писателе:");
         System.out.println("ID: " + writer.getId());
         System.out.println("Имя: " + writer.getFirstName());

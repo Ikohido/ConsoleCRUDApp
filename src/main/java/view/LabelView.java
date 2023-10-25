@@ -7,11 +7,11 @@ import java.util.List;
 public class LabelView {
     public void showAllLabels(List<Label> labels) {
         if (labels.isEmpty()) {
-            System.out.println("No labels found.");
+            System.out.println("Список меток пуст");
         } else {
-            System.out.println("Labels:");
+            System.out.println("Метки");
             for (Label label : labels) {
-                System.out.println(label.getId() + ": " + label.getName());
+                showLabel(label);
             }
         }
     }
@@ -25,9 +25,4 @@ public class LabelView {
             System.out.println("Label not found.");
         }
     }
-
-    public void showSuccessMessage(String action) {
-        System.out.println(action + " label successfully.");
-    }
-
 }

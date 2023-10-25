@@ -2,7 +2,6 @@ package repository;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import model.Label;
 import model.Writer;
 
 import java.io.FileReader;
@@ -13,15 +12,13 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WriterRepository implements GenericInterface<Writer, Integer>{
-    protected List<Writer> writers;
+public class WriterRepository implements GenericInterface<Writer, Integer> {
     private final Gson gson;
     private final String fileName;
 
     public WriterRepository(String fileName) {
         this.fileName = fileName;
         this.gson = new Gson();
-        this.writers = new ArrayList<>();
     }
 
     @Override
@@ -33,11 +30,12 @@ public class WriterRepository implements GenericInterface<Writer, Integer>{
                     return writer;
                 }
             }
-        }catch (NullPointerException n){
+        } catch (NullPointerException n) {
             System.out.println("Writers отсутствуют");
         }
         return null;
     }
+
     @Override
     public List<Writer> getAll() {
         return getAllWriters();
@@ -46,7 +44,7 @@ public class WriterRepository implements GenericInterface<Writer, Integer>{
     @Override
     public Writer save(Writer writer) {
         List<Writer> writers = getAllWriters();
-        if (writers == null){
+        if (writers == null) {
             writers = new ArrayList<>();
         }
         int maxId = writers.stream()
@@ -58,7 +56,6 @@ public class WriterRepository implements GenericInterface<Writer, Integer>{
         saveAllWriters(writers);
         return writer;
     }
-
 
 
     @Override
@@ -79,16 +76,18 @@ public class WriterRepository implements GenericInterface<Writer, Integer>{
         List<Writer> writers = getAllWriters();
         writers.removeIf(writer -> writer.getId() == id);
         saveAllWriters(writers);
-
     }
+
     private List<Writer> getAllWriters() {
         try (Reader reader = new FileReader(fileName)) {
-            Type listType = new TypeToken<List<Writer>>() {}.getType();
+            Type listType = new TypeToken<List<Writer>>() {
+            }.getType();
             return gson.fromJson(reader, listType);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
     private void saveAllWriters(List<Writer> writers) {
         try (java.io.Writer writer = new FileWriter(fileName)) {
             gson.toJson(writers, writer);

@@ -3,18 +3,17 @@ package controller;
 import model.Label;
 import model.Post;
 import model.PostStatus;
-import model.Writer;
 import repository.LabelRepository;
 import repository.PostRepository;
 import view.PostView;
 
-
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class PostController {
-    protected PostRepository postRepository = new PostRepository("src/main/resources/posts.json");
-    protected PostView postView = new PostView();
-    protected  PostController postController;
+    private PostRepository postRepository = new PostRepository("src/main/resources/posts.json");
+    private PostView postView = new PostView();
+
 
     public void createPost(int id, String content, List<Label> labels) {
         Date now = new Date();
@@ -23,48 +22,30 @@ public class PostController {
         postView.displaySuccessMessage("Пост успешно создан.");
     }
 
-    public void editPost(int id, String newContent, List<Label> newLabels, Date updateTime) {
-        try{
-            Post post = postRepository.getById(id);
-            if (post != null) {
-                post.setContent(newContent);
-                post.setLabels(newLabels);
-                post.setUpdated(updateTime);
-                postRepository.update(post);
-                postView.displaySuccessMessage("Пост успешно отредактирован.");
-            } else {
-                postView.displayErrorMessage("Пост с указанным ID не найден.");
-            }
-        } catch (NullPointerException nullPointerException) {
-            System.out.println("Список постов пуст");
-        }
+    public void editPost(int id, String newContent, List<Label> newLabels, Date updateTime) throws NullPointerException {
+        Post post = postRepository.getById(id);
+        post.setContent(newContent);
+        post.setLabels(newLabels);
+        post.setUpdated(updateTime);
+        postRepository.update(post);
+        postView.displaySuccessMessage("Пост успешно отредактирован.");
     }
 
-    public void deletePost(int id) {
-        try {
-            Post post = postRepository.getById(id);
-            if (post != null) {
-                post.setStatus(PostStatus.DELETED);
-                postRepository.update(post);
-                postView.displaySuccessMessage("Пост успешно удален.");
-            } else {
-                postView.displayErrorMessage("Пост с указанным ID не найден.");
-            }
-        } catch (NullPointerException n) {
-            System.out.println("Posts отсутствуют");
-        }
+    public void deletePost(int id) throws NullPointerException {
+        Post post = postRepository.getById(id);
+        post.setStatus(PostStatus.DELETED);
+        postRepository.update(post);
+        postView.displaySuccessMessage("Пост успешно удален.");
     }
-    public void getPost(int id) {
-            Post post = postRepository.getById(id);
-            if (post != null) {
-                postView.displayPost(post);
-            } else {
-                System.out.println("Post с указанным ID не найден.");
-            }
-        }
+
+    public void getPost(int id) throws NullPointerException {
+        Post post = postRepository.getById(id);
+        postView.displayPost(post);
+    }
+
     public void activatePostController() {
         Scanner scanner = new Scanner(System.in);
-        LabelRepository labelRepos = new LabelRepository("labels.json");
+        LabelRepository labelRepos = new LabelRepository("src/main/resources/labels.json");
         while (true) {
             try {
                 System.out.println("Меню:");
@@ -73,7 +54,7 @@ public class PostController {
                 System.out.println("3. Удалить пост");
                 System.out.println("4. Просмотреть пост по ID");
                 System.out.println("5. Просмотреть все посты");
-                System.out.println("6. Выйти");
+                System.out.println("0. Выйти");
                 System.out.print("Выберите опцию: ");
                 int choice = scanner.nextInt();
                 scanner.nextLine();
@@ -102,38 +83,75 @@ public class PostController {
                             }
                         }
                         createPost(id, content, labels);
-                        System.out.println(id);
                         break;
                     case 2:
                         System.out.print("Введите ID поста, который вы хотите отредактировать: ");
                         int editId = scanner.nextInt();
                         scanner.nextLine();
                         System.out.print("Введите новое содержание: ");
-                        String newContent = scanner.nextLine();
+                        String editContent = scanner.nextLine();
                         Date updateTime = new Date();
-                        // Здесь можно запросить ввод новых меток и создать список меток
+                        System.out.println("Нужны ли новые метки? Да/Нет");
+                        String apply = scanner.nextLine();
                         List<Label> newLabels = new ArrayList<>();
-                        editPost(editId, newContent, newLabels, updateTime);
+                        if (apply.equalsIgnoreCase("Да") || apply.equalsIgnoreCase("Нужны")) {
+                            System.out.print("Введите ID меток, разделяя их запятой: ");
+                            String labelIdsString = scanner.nextLine();
+                            String[] labelIdArray = labelIdsString.split(",");
+                            for (String labelIdStr : labelIdArray) {
+                                try {
+                                    int labelId = Integer.parseInt(labelIdStr.trim());
+                                    Label label = labelRepos.getById(labelId);
+                                    newLabels.add(label);
+                                } catch (NullPointerException npe) {
+                                    throw new NullPointerException();
+                                }
+                            }
+                            try {
+                                editPost(editId, editContent, newLabels, updateTime);
+                            } catch (NullPointerException npe) {
+                                System.out.println("Не удалось отредактировать пост");
+                            }
+                        } else {
+                            try {
+                                editPost(editId, editContent, newLabels, updateTime);
+                            } catch (NullPointerException npe) {
+                                System.out.println("Не удалось отредактировать пост");
+                            }
+                        }
                         break;
                     case 3:
                         System.out.print("Введите ID поста, который вы хотите удалить: ");
                         int deleteId = scanner.nextInt();
-                        deletePost(deleteId);
+                        try {
+                            deletePost(deleteId);
+                        } catch (NullPointerException npe) {
+                            System.out.println("Пост с данным ID не найден"); // мы тут пишем об этом в связи с тем,
+                            // что по условию задачи посты на самом деле не удаляются, а просто переводятся в статус "DELETED".
+                            // Поэтому я и вставил sout в каждый контроллер.
+                        }
+
                         break;
                     case 4:
                         System.out.print("Введите ID поста для просмотра: ");
                         int viewId = scanner.nextInt();
-                        try{
+                        PostController postController = new PostController();
+                        try {
                             postController.getPost(viewId);
-                        }catch (NullPointerException nullPointerException){
-                            System.out.println("Посты отсутствуют");
-                    }
+                        } catch (NullPointerException nullPointerException) {
+                            System.out.println("Пост с указанным ID отсутствует");
+                        }
 
                         break;
                     case 5:
-                        postView.displayAllPosts(postRepository.getAll());
+                        try {
+                            postView.displayAllPosts(postRepository.getAll());
+                        } catch (NullPointerException npe) {
+                            System.out.println("Список постов пуст");
+                        }
+
                         break;
-                    case 6:
+                    case 0:
                         System.out.println("Выход из программы.");
                         return;
                     default:

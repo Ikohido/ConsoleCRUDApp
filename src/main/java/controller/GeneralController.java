@@ -15,6 +15,7 @@ public class GeneralController {
                 System.out.println("1. Управление Label");
                 System.out.println("2. Управление Post");
                 System.out.println("3. Управление Writer");
+                System.out.println("0. Выйти");
                 System.out.print("Выберите опцию: ");
                 int choice = scanner.nextInt();
                 scanner.nextLine();
@@ -27,6 +28,12 @@ public class GeneralController {
                         break;
                     case 3:
                         writerController.activateWriterController();
+                        break;
+                    case 0:
+                        System.out.println("Выход из программы.");
+                        return;
+                    default:
+                        System.out.println("Некорректный выбор. Пожалуйста, выберите существующую опцию.");
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);

@@ -1,5 +1,6 @@
 package model;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -59,6 +60,7 @@ public class Post {
     public void setStatus(PostStatus status) {
         this.status = status;
     }
+
     public Post(int id, String content, Date created, Date updated, List<Label> labels, PostStatus status) {
         this.id = id;
         this.content = content;
@@ -73,15 +75,13 @@ public class Post {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Post post = (Post) o;
-        return id == post.id && Objects.equals(content, post.content) && Objects.equals(created, post.created) && Objects.equals(updated, post.updated) && Objects.equals(labels, post.labels) && Objects.equals(status, post.status);
+        return id == post.id && Objects.equals(content, post.content) && Objects.equals(created, post.created) && Objects.equals(updated, post.updated) && Objects.equals(labels, post.labels) && status == post.status;
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, content, created, updated, labels, status);
     }
-
-
 
     @Override
     public String toString() {

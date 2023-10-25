@@ -12,13 +12,11 @@ import java.util.List;
 
 public class LabelRepository implements GenericInterface<Label, Integer> {
     private final String dataFilePath;
-    private final Gson gson;
-    private List<Label> labels;
+    private final Gson gson = new Gson();
+
 
     public LabelRepository(String dataFilePath) {
         this.dataFilePath = dataFilePath;
-        this.gson = new Gson();
-        this.labels = new ArrayList<>(); // Инициализация пустой коллекции в конструкторе
     }
 
     @Override
@@ -31,7 +29,7 @@ public class LabelRepository implements GenericInterface<Label, Integer> {
                 }
             }
         } catch (NullPointerException n) {
-            System.out.println("Labels отсутствуют");
+            System.out.println("Метка отсутствует");
         }
 
         return null;
