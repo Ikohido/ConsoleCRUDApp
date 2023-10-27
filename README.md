@@ -37,17 +37,11 @@ view - все данные, необходимые для работы с кон
 Для репозиторного слоя желательно использовать базовый интерфейс:
 
 interface GenericRepository<T,ID> {
-
-	T getById(ID id);
- 
-     	List<T> getAll();
-      
+T getById(ID id);
+List<T> getAll();
 T save(T t);
-
 T update(T t);
-
 void deleteById(ID id);
-
 }
 
 interface WriterRepository extends GenericRepository<Writer, Integer>
