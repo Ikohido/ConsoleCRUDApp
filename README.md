@@ -40,7 +40,7 @@ interface WriterRepository extends GenericRepository<Writer, Integer>
 
 class GsonWriterRepositoryImpl implements WriterRepository
 
-Для работы с json необходимо использовать библиотеку Gson(https://mvnrepository.com/artifact/com.google.code.gson/gson)
+Для работы с json необходимо использовать библиотеку [Gson](https://mvnrepository.com/artifact/com.google.code.gson/gson)
 Для импорта зависимостей - Maven/Gradle на выбор.
 
 Результатом выполнения задания должен быть отдельный репозиторий с README.md файлом, который содержит описание задачи, проекта.
