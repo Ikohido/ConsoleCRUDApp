@@ -15,7 +15,7 @@ public class LabelControllerTest {
     LabelView labelView = new LabelView();
     LabelRepository labelRepository = new LabelRepository("src/test/java/resources/labelsTest.json");
     LabelController labelController = new LabelController(labelRepository);
-
+    // sssssssssssssssss
     /**
      * Данный метод создает метку и сохраняет ее в labels.json
      * Given: Дана метка с именем "Тест1"
