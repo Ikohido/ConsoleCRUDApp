@@ -1,10 +1,12 @@
 package controller;
 
+import repository.LabelRepository;
+
 import java.util.Scanner;
 
 public class GeneralController {
     static PostController postController = new PostController();
-    static LabelController labelController = new LabelController();
+    static LabelController labelController = new LabelController(new LabelRepository("src/main/resources/labels.json"));
     static WriterController writerController = new WriterController();
 
     public static void activateGeneralController() {

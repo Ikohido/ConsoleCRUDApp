@@ -9,8 +9,12 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class LabelController {
-    private LabelRepository labelRepository = new LabelRepository("src/main/resources/labels.json");
+    private LabelRepository labelRepository;
     private LabelView labelView = new LabelView();
+
+    public LabelController(LabelRepository labelRepository) {
+        this.labelRepository = labelRepository;
+    }
 
     public void createLabel(int id, String name) {
         Label label = new Label(id, name, PostStatus.ACTIVE);
@@ -39,7 +43,7 @@ public class LabelController {
 
     public void activateLabelController() {
         Scanner scanner = new Scanner(System.in);
-        LabelController labelController = new LabelController();
+        LabelController labelController = new LabelController(labelRepository);
         while (true) {
             try {
                 System.out.println("Меню:");

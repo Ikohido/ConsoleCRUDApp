@@ -3,9 +3,6 @@ package controller;
 import model.Label;
 import model.PostStatus;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import repository.LabelRepository;
 import view.LabelView;
 
@@ -15,37 +12,35 @@ import java.io.PrintStream;
 import static org.junit.Assert.assertEquals;
 
 public class LabelControllerTest {
-    @Mock
     LabelView labelView = new LabelView();
-    @InjectMocks
-    LabelController labelController = Mockito.mock(LabelController.class);
-    @Mock
     LabelRepository labelRepository = new LabelRepository("src/test/java/resources/labelsTest.json");
-    @Mock
-    Label label = new Label(1, "Тест1", PostStatus.ACTIVE);
+    LabelController labelController = new LabelController(labelRepository);
 
-    /*      Данный метод создает метку и сохраняет ее в labels.json
-            Create: Создание метки
-            Save: Сохранение метки в json файл
-            Equals: Сравнение ожидаемой и действительной меток.
+    /**
+     * Данный метод создает метку и сохраняет ее в labels.json
+     * Given: Дана метка с именем "Тест1"
+     * When: Сохранение метки в json файл
+     * Then: Проверка, что метка корректно создалась
      */
     @Test
     public void createLabelTest() {
-        //        --- Create ---
+        // --- Given ---
+        Label label = new Label(1, "Тест1", PostStatus.ACTIVE);
+        // --- When ---
         labelController.createLabel(label.getId(), label.getName());
-        //        --- Save ---
-        labelRepository.save(label);
-        //        --- Equals ---
+        // --- Then ---
         assertEquals(label, labelRepository.getById(label.getId()));
     }
 
-    /*      Данный метод изменяет название метки
-            Edit: Изменение
-            Update: Сохранение изменения
-            Equals: Сравнение ожидаемой и действительной меток.
-    */
+    /**
+     * Данный метод изменяет название метки
+     * Given: Изменение
+     * Update: Сохранение изменения
+     * Then: Сравнение ожидаемой и действительной меток.
+     */
     @Test
     public void editLabelTest() {
+        Label label = new Label(1, "Тест1", PostStatus.ACTIVE);
         //        --- Edit ---
         label.setName("Тест2");
         //        --- Update ---
@@ -61,6 +56,7 @@ public class LabelControllerTest {
     */
     @Test
     public void deleteLabelTest() {
+        Label label = new Label(1, "Тест1", PostStatus.ACTIVE);
         //        --- NewStatus ---
         label.setStatus(PostStatus.DELETED);
         //        --- UpdateStatus ---
@@ -78,6 +74,7 @@ public class LabelControllerTest {
         Equals: Сравнение ожидаемой и действительной меток.*/
     @Test
     public void getLabelTest() {
+        Label label = new Label(1, "Тест1", PostStatus.ACTIVE);
         //        --- Output ---
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         //        --- SetOutput ---
