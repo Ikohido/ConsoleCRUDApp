@@ -2,8 +2,10 @@ package controller;
 
 import model.Label;
 import model.PostStatus;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import repository.LabelRepository;
 import view.LabelView;
@@ -19,7 +21,7 @@ public class LabelControllerTest {
     LabelView labelView = new LabelView();
     LabelRepository labelRepository = new LabelRepository("src/test/java/resources/labelsTest.json");
     LabelController labelController = new LabelController(labelRepository);
-    private static final String jsonFileName = "labelsTest.json";
+    private static final String jsonFileName = "src/test/java/resources/labelsTest.json";
     private static final String jsonCopyName = "resources/labelsTestCopy.json";
 
     /**
@@ -27,8 +29,8 @@ public class LabelControllerTest {
      * То есть тесты по очереди выполняют то, что должны выполнять, т.е. меняют метку, а потом все восстанавливается и может снова работать
      *
      */
-    @AfterAll
-    public void clearJsonFile(String jsonFileName) {
+    @Before
+    public void clearJsonFile() {
         try (FileWriter writer = new FileWriter(jsonFileName, false)) {
             writer.write(""); // Пишем пустую строку, чтобы очистить содержимое файла
         } catch (IOException e) {
@@ -38,14 +40,17 @@ public class LabelControllerTest {
     /**
      * Данный метод создает метку
      * Given: Дана метка с именем "Тест1"
-     * Then: Создание метки и проверка работает ли метод.
+     * When: Создание метки и запись в labelsTest.json
+     * Then: Проверка, что метка корректно создалась
      */
     @Test
-    public void createLabelTest() { //Вот он, работающий тест
+    public void createLabelTest() {
         // --- Given ---
         Label label = new Label(1, "Тест1", PostStatus.ACTIVE);
+        // --- When ---
+        labelController.saveInJsonFile(labelController.createLabel(label.getId(), label.getName()));
         // --- Then ---
-        assertEquals(label, labelController.createLabel(label.getId(), label.getName()));
+        assertEquals(label, labelRepository.getById(label.getId()));
     }
 
 
