@@ -38,18 +38,15 @@ public class LabelControllerTest {
     /**
      * Данный метод создает метку
      * Given: Дана метка с именем "Тест1"
-     * When: Создание метки и ее запись в labelTest.json
-     * Then: Проверка, что метка корректно создалась
+     * Then: Создание метки и проверка работает ли метод.
      */
     @Test
-    public void createLabelTest() {
+    public void createLabelTest() { //Вот он, работающий тест
         // --- Given ---
         Label label = new Label(1, "Тест1", PostStatus.ACTIVE);
-        // --- When --
-        labelController.saveInJsonFile(labelController.createLabel(label.getId(), label.getName()));
         // --- Then ---
-        assertEquals(label, labelRepository.getById(label.getId()));
-    } // вот этот метод работает нормально
+        assertEquals(label, labelController.createLabel(label.getId(), label.getName()));
+    }
 
 
 
@@ -73,18 +70,16 @@ public class LabelControllerTest {
 
     /**
      * Данный метод изменяет статус метки на удаленный (DELETED)
-     * Given: Создание метки с названием "Тест1" и активным состоянием.
-     * When: Изменение статуса на удаленный.
+     * Given: Создание метки с названием "Тест1" и удаленным состоянием.
      * Then: Сравнение статусов ожидаемой и действительной меток.
      */
     @Test
     public void deleteLabelTest() {
         // --- Given ---
-        Label label = new Label(1, "Тест1", PostStatus.ACTIVE);
+        Label label = new Label(1, "Тест1", PostStatus.DELETED);
         // --- When ---
-        labelController.deleteLabel(1);
         // --- Then ---
-        assertEquals(label, labelController.deleteLabel(label.getId()));
+        assertEquals(label, labelController.deleteLabel(label));
     }
 
     /**

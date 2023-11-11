@@ -36,8 +36,7 @@ public class LabelController {
         return label; // этот метод тоже подредачил, должен был работать по идее, но оказалось, что не работает
     }
 
-    public Label deleteLabel(int id) throws NullPointerException {
-        Label label = labelRepository.getById(id);
+    public Label deleteLabel(Label label) throws NullPointerException {
         label.setStatus(PostStatus.DELETED);
         System.out.println("Label удален: " + label);
         return label;
@@ -86,8 +85,9 @@ public class LabelController {
                         System.out.print("Введите ID Label, который вы хотите удалить: ");
                         int deleteId = scanner.nextInt();
                         scanner.nextLine();
+                        Label label = labelRepository.getById(deleteId);
                         try {
-                            updateJsonFile(deleteLabel(deleteId));
+                            updateJsonFile(deleteLabel(label));
                         } catch (NullPointerException npe) {
                             System.out.println("Метка с таким ID отсутствует");// мы тут пишем об этом в связи с тем,
                             // что по условию задачи метки на самом деле не удаляются, а просто переводятся в статус "DELETED".
