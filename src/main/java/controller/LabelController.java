@@ -9,31 +9,38 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class LabelController {
-    private LabelRepository labelRepository;
-    private LabelView labelView = new LabelView();
+    private final LabelRepository labelRepository;
+    private final LabelView labelView = new LabelView();
 
     public LabelController(LabelRepository labelRepository) {
         this.labelRepository = labelRepository;
     }
 
-    public void createLabel(int id, String name) {
-        Label label = new Label(id, name, PostStatus.ACTIVE);
-        labelRepository.save(label);
-        System.out.println("Label создан: " + label);
+    public void updateJsonFile(Label label) {
+        labelRepository.update(label);
     }
 
-    public void editLabel(int id, String name) throws NullPointerException {
+    public void saveInJsonFile(Label label) {
+        labelRepository.save(label);
+    }
+
+    public Label createLabel(int id, String name) {
+        Label label = new Label(id, name, PostStatus.ACTIVE);
+        return label; // изменил этот метод, он работает
+    }
+
+    public Label editLabel(int id, String name) throws NullPointerException {
         Label label = labelRepository.getById(id);
         label.setName(name);
-        labelRepository.update(label);
         System.out.println("Label отредактирован: " + label);
+        return label; // этот метод тоже подредачил, должен был работать по идее, но оказалось, что не работает
     }
 
-    public void deleteLabel(int id) throws NullPointerException {
+    public Label deleteLabel(int id) throws NullPointerException {
         Label label = labelRepository.getById(id);
         label.setStatus(PostStatus.DELETED);
-        labelRepository.update(label);
         System.out.println("Label удален: " + label);
+        return label;
     }
 
     public void getLabel(int id) throws NullPointerException {
@@ -61,7 +68,7 @@ public class LabelController {
                         int id = 0;
                         System.out.print("Введите имя для нового Label: ");
                         String name = scanner.nextLine();
-                        createLabel(id, name);
+                        saveInJsonFile(createLabel(id, name));
                         break;
                     case 2:
                         System.out.print("Введите ID Label, который вы хотите отредактировать: ");
@@ -70,7 +77,7 @@ public class LabelController {
                         System.out.print("Введите новое имя: ");
                         String newName = scanner.nextLine();
                         try {
-                            labelController.editLabel(editId, newName);
+                            updateJsonFile(editLabel(editId, newName));
                         } catch (NullPointerException npe) {
                             System.out.println("Метка с этим ID отсутствует");
                         }
@@ -80,7 +87,7 @@ public class LabelController {
                         int deleteId = scanner.nextInt();
                         scanner.nextLine();
                         try {
-                            labelController.deleteLabel(deleteId);
+                            updateJsonFile(deleteLabel(deleteId));
                         } catch (NullPointerException npe) {
                             System.out.println("Метка с таким ID отсутствует");// мы тут пишем об этом в связи с тем,
                             // что по условию задачи метки на самом деле не удаляются, а просто переводятся в статус "DELETED".
@@ -91,7 +98,7 @@ public class LabelController {
                         System.out.print("Введите ID Label для просмотра: ");
                         int viewId = scanner.nextInt();
                         try {
-                            labelController.getLabel(viewId);
+                            getLabel(viewId);
                         } catch (NullPointerException nullPointerException) {
                             System.out.println("Метка отсутствует");
                         }

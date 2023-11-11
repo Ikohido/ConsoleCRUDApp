@@ -3,10 +3,14 @@ package controller;
 import model.Label;
 import model.PostStatus;
 import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
 import repository.LabelRepository;
 import view.LabelView;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintStream;
 
 import static org.junit.Assert.assertEquals;
@@ -15,63 +19,83 @@ public class LabelControllerTest {
     LabelView labelView = new LabelView();
     LabelRepository labelRepository = new LabelRepository("src/test/java/resources/labelsTest.json");
     LabelController labelController = new LabelController(labelRepository);
-    // sssssssssssssssss
+    private static final String jsonFileName = "labelsTest.json";
+    private static final String jsonCopyName = "resources/labelsTestCopy.json";
+
     /**
-     * Данный метод создает метку и сохраняет ее в labels.json
+     * Идея этого метода заключена в том, что после выполнения всех тестов, метод чистит labelsTest.json
+     * То есть тесты по очереди выполняют то, что должны выполнять, т.е. меняют метку, а потом все восстанавливается и может снова работать
+     *
+     */
+    @AfterAll
+    public void clearJsonFile(String jsonFileName) {
+        try (FileWriter writer = new FileWriter(jsonFileName, false)) {
+            writer.write(""); // Пишем пустую строку, чтобы очистить содержимое файла
+        } catch (IOException e) {
+            System.out.println("Нет возможности изменить json файл"); // Обработка исключения в случае ошибки записи
+        }
+    }
+    /**
+     * Данный метод создает метку
      * Given: Дана метка с именем "Тест1"
-     * When: Сохранение метки в json файл
+     * When: Создание метки и ее запись в labelTest.json
      * Then: Проверка, что метка корректно создалась
      */
     @Test
     public void createLabelTest() {
         // --- Given ---
         Label label = new Label(1, "Тест1", PostStatus.ACTIVE);
-        // --- When ---
-        labelController.createLabel(label.getId(), label.getName());
+        // --- When --
+        labelController.saveInJsonFile(labelController.createLabel(label.getId(), label.getName()));
         // --- Then ---
         assertEquals(label, labelRepository.getById(label.getId()));
-    }
+    } // вот этот метод работает нормально
+
+
 
     /**
-     * Данный метод изменяет название метки
-     * Given: Изменение
-     * Update: Сохранение изменения
-     * Then: Сравнение ожидаемой и действительной меток.
+     * Данный метод достает метку из labels.json и изменяет ее название.
+     * Given: Дана метка с названием "Тест1"
+     * When: Изменение названия метки на "Тест2" и сохранение в labelsTest.json
+     * Then: Проверка изменения имени метки.
      */
     @Test
     public void editLabelTest() {
+        // --- Given ---
         Label label = new Label(1, "Тест1", PostStatus.ACTIVE);
-        //        --- Edit ---
+        // --- When ---
+        labelController.updateJsonFile(labelController.editLabel(label.getId(), "Тест2"));
         label.setName("Тест2");
-        //        --- Update ---
-        labelRepository.update(label);
-        //        --- Equals ---
+        // --- Then ---
         assertEquals(label, labelRepository.getById(label.getId()));
-    }
+    } // а вот начиная с этого идут неприятности
 
-    /*      Данный метод изменяет статус метки на удаленный (DELETED)
-            NewStatus: Изменение статуса на удаленный
-            UpdateStatus: Сохранение нового статуса
-            Equals: Сравнение ожидаемой и действительной меток.
-    */
+
+    /**
+     * Данный метод изменяет статус метки на удаленный (DELETED)
+     * Given: Создание метки с названием "Тест1" и активным состоянием.
+     * When: Изменение статуса на удаленный.
+     * Then: Сравнение статусов ожидаемой и действительной меток.
+     */
     @Test
     public void deleteLabelTest() {
+        // --- Given ---
         Label label = new Label(1, "Тест1", PostStatus.ACTIVE);
-        //        --- NewStatus ---
-        label.setStatus(PostStatus.DELETED);
-        //        --- UpdateStatus ---
-        labelRepository.update(label);
-        //        --- Equals ---
-        assertEquals(label, labelRepository.getById(label.getId()));
+        // --- When ---
+        labelController.deleteLabel(1);
+        // --- Then ---
+        assertEquals(label, labelController.deleteLabel(label.getId()));
     }
 
-    /*  Данный метод выводит данные о указанной по ID метке.
-        Output: Захват вывода в консоль
-        SetOutput: Использование захвата и вывод данных в output
-        ShowLabel: Использование метода showLabel() для выдачи данных о метке.
-        SetOut: Захват вывода прерывается.
-        Expect: Что мы ожидаем увидеть от showLabel()
-        Equals: Сравнение ожидаемой и действительной меток.*/
+    /**
+     * Данный метод выводит данные о указанной по ID метке.
+     * Output: Захват вывода в консоль
+     * SetOutput: Использование захвата и вывод данных в output
+     * ShowLabel: Использование метода showLabel() для выдачи данных о метке.
+     * SetOut: Захват вывода прерывается.
+     * Expect: Что мы ожидаем увидеть от showLabel()
+     * Equals: Сравнение ожидаемой и действительной меток.
+     */
     @Test
     public void getLabelTest() {
         Label label = new Label(1, "Тест1", PostStatus.ACTIVE);
