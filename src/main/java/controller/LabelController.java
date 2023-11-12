@@ -26,14 +26,14 @@ public class LabelController {
 
     public Label createLabel(int id, String name) {
         Label label = new Label(id, name, PostStatus.ACTIVE);
-        return label; // изменил этот метод, он работает
+        return label;
     }
 
     public Label editLabel(int id, String name) throws NullPointerException {
         Label label = labelRepository.getById(id);
         label.setName(name);
         System.out.println("Label отредактирован: " + label);
-        return label; // этот метод тоже подредачил, должен был работать по идее, но оказалось, что не работает
+        return label;
     }
 
     public Label deleteLabel(Label label) throws NullPointerException {
