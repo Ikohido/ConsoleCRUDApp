@@ -31,7 +31,6 @@ public class LabelRepository implements GenericInterface<Label, Integer> {
         } catch (NullPointerException n) {
             System.out.println("Метка отсутствует");
         }
-
         return null;
     }
 

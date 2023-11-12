@@ -1,10 +1,11 @@
 package org.main;
 
-import static controller.GeneralController.activateGeneralController;
 
+import controller.GeneralController;
 
 public class Main {
     public static void main(String[] args) {
-        activateGeneralController();
+        GeneralController generalController = new GeneralController();
+        generalController.activateGeneralController();
     }
 }

@@ -16,7 +16,7 @@ public class LabelController {
         this.labelRepository = labelRepository;
     }
 
-    public void updateJsonFile(Label label) {
+    public void updateJsonFile(Label label) throws NullPointerException {
         labelRepository.update(label);
     }
 
@@ -25,8 +25,7 @@ public class LabelController {
     }
 
     public Label createLabel(int id, String name) {
-        Label label = new Label(id, name, PostStatus.ACTIVE);
-        return label;
+        return new Label(id, name, PostStatus.ACTIVE);
     }
 
     public Label editLabel(int id, String name) throws NullPointerException {
@@ -36,20 +35,27 @@ public class LabelController {
         return label;
     }
 
-    public Label deleteLabel(Label label) throws NullPointerException {
-        label.setStatus(PostStatus.DELETED);
-        System.out.println("Label удален: " + label);
+    public Label deleteLabel(Label label) {
+        try {
+            label.setStatus(PostStatus.DELETED);
+            System.out.println("Label удален: " + label);
+        } catch (NullPointerException npe) {
+            System.out.println("Метка с таким ID отсутствует");
+        }
         return label;
     }
 
-    public void getLabel(int id) throws NullPointerException {
-        Label label = labelRepository.getById(id);
-        labelView.showLabel(label);
+    public void getLabel(int id) {
+        try {
+            Label label = labelRepository.getById(id);
+            labelView.showLabel(label);
+        } catch (NullPointerException npe) {
+            System.out.println("Метка отсутствует");
+        }
     }
 
     public void activateLabelController() {
         Scanner scanner = new Scanner(System.in);
-        LabelController labelController = new LabelController(labelRepository);
         while (true) {
             try {
                 System.out.println("Меню:");
@@ -78,7 +84,8 @@ public class LabelController {
                         try {
                             updateJsonFile(editLabel(editId, newName));
                         } catch (NullPointerException npe) {
-                            System.out.println("Метка с этим ID отсутствует");
+                            System.out.println("Метка с указанным ID отсутствует. Будет создана новая метка с указанным именем");
+                            saveInJsonFile(createLabel(editId, newName));
                         }
                         break;
                     case 3:
@@ -86,22 +93,12 @@ public class LabelController {
                         int deleteId = scanner.nextInt();
                         scanner.nextLine();
                         Label label = labelRepository.getById(deleteId);
-                        try {
-                            updateJsonFile(deleteLabel(label));
-                        } catch (NullPointerException npe) {
-                            System.out.println("Метка с таким ID отсутствует");// мы тут пишем об этом в связи с тем,
-                            // что по условию задачи метки на самом деле не удаляются, а просто переводятся в статус "DELETED".
-                            // Поэтому я и вставил sout в каждый контроллер.
-                        }
+                        updateJsonFile(deleteLabel(label));
                         break;
                     case 4:
                         System.out.print("Введите ID Label для просмотра: ");
                         int viewId = scanner.nextInt();
-                        try {
-                            getLabel(viewId);
-                        } catch (NullPointerException nullPointerException) {
-                            System.out.println("Метка отсутствует");
-                        }
+                        getLabel(viewId);
                     case 5:
                         try {
                             labelView.showAllLabels(labelRepository.getAll());

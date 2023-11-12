@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class WriterController {
-    private WriterRepository writerRepository = new WriterRepository("src/main/resources/writers.json");
+    private final WriterRepository writerRepository = new WriterRepository("src/main/resources/writers.json");
     private final WriterView writerView = new WriterView();
 
 

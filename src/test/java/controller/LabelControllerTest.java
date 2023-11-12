@@ -4,6 +4,7 @@ import model.Label;
 import model.PostStatus;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
 import repository.LabelRepository;
 
 import java.io.FileWriter;
@@ -14,15 +15,16 @@ import static org.junit.Assert.assertEquals;
 public class LabelControllerTest {
     LabelRepository labelRepository = new LabelRepository("src/test/java/resources/labelsTest.json");
     LabelController labelController = new LabelController(labelRepository);
-    private static final String jsonFileName = "src/test/java/resources/labelsTest.json";
+    private static final String JSON_FILE_NAME = "src/test/java/resources/labelsTest.json";
 
     /**
      * Идея этого метода заключена в том, что после выполнения всех тестов, метод чистит labelsTest.json
      * То есть тесты по очереди выполняют то, что должны выполнять, т.е. меняют метку, а потом все восстанавливается и может снова работать
      */
+    @AfterAll
     @Before
     public void clearJsonFile() {
-        try (FileWriter writer = new FileWriter(jsonFileName, false)) {
+        try (FileWriter writer = new FileWriter(JSON_FILE_NAME, false)) {
             writer.write(""); // Пишем пустую строку, чтобы очистить содержимое файла
         } catch (IOException e) {
             System.out.println("Нет возможности изменить json файл"); // Обработка исключения в случае ошибки записи
@@ -30,7 +32,7 @@ public class LabelControllerTest {
     }
 
     /**
-     * Данный метод создает метку
+     * Данный метод тестирует создание метки
      * Given: Дана метка с именем "Тест1"
      * When: Создание метки и запись в labelsTest.json
      * Then: Проверка, что метка корректно создалась
@@ -46,7 +48,7 @@ public class LabelControllerTest {
     }
 
     /**
-     * Данный метод создает метку, сохраняет ее и изменяет название.
+     * Данный метод тестирует редактирование метки.
      * Given: Создается метка с названием "Тест1", после чего проверяется функция сохранения в labelsTest.json
      * When: Изменение названия метки на "Тест2" и сохранение в labelsTest.json
      * Then: Создание проверочной метки и сравнение с первоначальной.
@@ -54,14 +56,14 @@ public class LabelControllerTest {
     @Test
     public void editLabelTest() {
         // --- Given ---
-        Label firstLabel = new Label(1, "Тест1", PostStatus.ACTIVE);
-        labelController.saveInJsonFile(labelController.createLabel(firstLabel.getId(), firstLabel.getName()));
-        assertEquals(firstLabel, labelRepository.getById(firstLabel.getId()));
+        Label label = new Label(1, "Тест1", PostStatus.ACTIVE);
+        labelController.saveInJsonFile(labelController.createLabel(label.getId(), label.getName()));
+        assertEquals(label, labelRepository.getById(label.getId()));
         // --- When ---
-        labelController.updateJsonFile(labelController.editLabel(firstLabel.getId(), "Тест2"));
+        labelController.updateJsonFile(labelController.editLabel(label.getId(), "Тест2"));
         // --- Then ---
-        Label secondLabel = new Label(1, "Тест2", PostStatus.ACTIVE);
-        assertEquals(secondLabel, labelRepository.getById(firstLabel.getId()));
+        Label expectedLabel = new Label(1, "Тест2", PostStatus.ACTIVE);
+        assertEquals(expectedLabel, labelRepository.getById(label.getId()));
     }
 
 
@@ -74,13 +76,13 @@ public class LabelControllerTest {
     @Test
     public void deleteLabelTest() {
         // --- Given ---
-        Label firstLabel = new Label(1, "Тест1", PostStatus.ACTIVE);
-        labelController.saveInJsonFile(labelController.createLabel(firstLabel.getId(), firstLabel.getName()));
-        assertEquals(firstLabel, labelRepository.getById(firstLabel.getId()));
+        Label label = new Label(1, "Тест1", PostStatus.ACTIVE);
+        labelController.saveInJsonFile(labelController.createLabel(label.getId(), label.getName()));
+        assertEquals(label, labelRepository.getById(label.getId()));
         // --- When ---
-        labelController.deleteLabel(firstLabel);
+        labelController.updateJsonFile(labelController.deleteLabel(label));
         // --- Then ---
-        Label secondLabel = new Label(1, "Тест1", PostStatus.ACTIVE);
-        assertEquals(secondLabel, labelRepository.getById(firstLabel.getId()));
+        Label expectedLabel = new Label(1, "Тест1", PostStatus.DELETED);
+        assertEquals(expectedLabel, labelRepository.getById(label.getId()));
     }
 }
