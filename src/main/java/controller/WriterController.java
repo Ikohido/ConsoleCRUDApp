@@ -13,31 +13,42 @@ import java.util.List;
 import java.util.Scanner;
 
 public class WriterController {
-    private final WriterRepository writerRepository = new WriterRepository("src/main/resources/writers.json");
+    private final WriterRepository writerRepository;
     private final WriterView writerView = new WriterView();
 
-
-    public void createWriter(int id, String firstName, String lastName, List<Post> posts) {
-        Writer writer = new Writer(id, firstName, lastName, posts, PostStatus.ACTIVE);
-        writerRepository.save(writer);
-        System.out.println("Писатель создан: " + writer);
+    public WriterController(WriterRepository writerRepository) {
+        this.writerRepository = writerRepository;
     }
 
-    public void editWriter(int id, String firstName, String lastName, List<Post> posts) throws NullPointerException {
+    public void updateJsonFile(Writer writer) throws NullPointerException {
+        writerRepository.update(writer);
+    }
+
+    public void saveInJsonFile(Writer writer) {
+        writerRepository.save(writer);
+    }
+
+    public Writer createWriter(int id, String firstName, String lastName, List<Post> posts) {
+        return new Writer(id, firstName, lastName, posts, PostStatus.ACTIVE);
+    }
+
+    public Writer editWriter(int id, String firstName, String lastName, List<Post> posts) throws NullPointerException {
         Writer writer = writerRepository.getById(id);
         writer.setFirstName(firstName);
         writer.setLastName(lastName);
         writer.setPosts(posts);
-        writerRepository.update(writer);
         System.out.println("Писатель отредактирован: " + writer);
-
+        return writer;
     }
 
-    public void deleteWriter(int id) throws NullPointerException {
-        Writer writer = writerRepository.getById(id);
-        writer.setStatus(PostStatus.DELETED);
-        writerRepository.update(writer);
-        System.out.println("Writer удален: " + writer);
+    public Writer deleteWriter(Writer writer) {
+        try {
+            writer.setStatus(PostStatus.DELETED);
+            System.out.println("Writer удален: " + writer);
+        } catch (NullPointerException npe) {
+            System.out.println("Писатель отсутствует");
+        }
+        return writer;
     }
 
     public void getWriter(int id) throws NullPointerException {
@@ -52,7 +63,7 @@ public class WriterController {
 
     public void activateWriterController() {
         Scanner scanner = new Scanner(System.in);
-        WriterController writerController = new WriterController();
+        WriterController writerController = new WriterController(writerRepository);
         PostRepository repos = new PostRepository("src/main/resources/posts.json");
         while (true) {
             try {
@@ -82,7 +93,7 @@ public class WriterController {
                         } catch (NullPointerException npe) {
                             System.out.println("Нужный пост не найден");
                         }
-                        writerController.createWriter(id, firstName, lastName, neededPost);
+                        saveInJsonFile(writerController.createWriter(id, firstName, lastName, neededPost));
                         break;
                     case 2:
                         System.out.print("Введите ID писателя, которого вы хотите отредактировать: ");
@@ -102,11 +113,11 @@ public class WriterController {
                                 Post post = repos.getById(postIdd);
                                 newPosts.add(post);
                             } catch (NullPointerException npe) {
-                                throw new NullPointerException();
+                                System.out.println("Посты отсутствуют");
                             }
                         }
                         try {
-                            writerController.editWriter(editId, newFirstName, newLastName, newPosts);
+                            updateJsonFile(writerController.editWriter(editId, newFirstName, newLastName, newPosts));
                         } catch (NullPointerException npe) {
                             System.out.println("Не удалось отредактировать пост");
                         }
@@ -114,13 +125,9 @@ public class WriterController {
                     case 3:
                         System.out.print("Введите ID писателя, которого вы хотите удалить: ");
                         int deleteId = scanner.nextInt();
-                        try {
-                            writerController.deleteWriter(deleteId);
-                        } catch (NullPointerException npe) {
-                            System.out.println("Писатель с указанным ID не найден");// мы тут пишем об этом в связи с тем,
-                            // что по условию задачи писатели на самом деле не удаляются, а просто переводятся в статус "DELETED".
-                            // Поэтому я и вставил sout в каждый контроллер.
-                        }
+                        scanner.nextLine();
+                        Writer writer = writerRepository.getById(deleteId);
+                        updateJsonFile(deleteWriter(writer));
                         break;
                     case 4:
                         System.out.print("Введите ID писателя, информацию о котором вы хотите получить: ");

@@ -1,13 +1,14 @@
 package controller;
 
 import repository.LabelRepository;
+import repository.WriterRepository;
 
 import java.util.Scanner;
 
 public class GeneralController {
     private final PostController postController = new PostController();
     private final LabelController labelController = new LabelController(new LabelRepository("src/main/resources/labels.json"));
-    private final WriterController writerController = new WriterController();
+    private final WriterController writerController = new WriterController(new WriterRepository("src/main/resources/writers.json"));
 
     public void activateGeneralController() {
         Scanner scanner = new Scanner(System.in);
@@ -31,7 +32,7 @@ public class GeneralController {
                     }
                     default -> System.out.println("Некорректный выбор. Пожалуйста, выберите существующую опцию.");
                 }
-            }catch (Exception e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }

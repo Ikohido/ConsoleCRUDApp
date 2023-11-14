@@ -13,12 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WriterRepository implements GenericInterface<Writer, Integer> {
-    private final Gson gson;
+    private final Gson gson = new Gson();
     private final String fileName;
 
     public WriterRepository(String fileName) {
         this.fileName = fileName;
-        this.gson = new Gson();
     }
 
     @Override
@@ -54,6 +53,7 @@ public class WriterRepository implements GenericInterface<Writer, Integer> {
         writer.setId(maxId + 1);
         writers.add(writer);
         saveAllWriters(writers);
+        System.out.println("Писатель создан" + writer);
         return writer;
     }
 

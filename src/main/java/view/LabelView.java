@@ -18,11 +18,11 @@ public class LabelView {
 
     public void showLabel(Label label) {
         if (label != null) {
-            System.out.println("Label Details:");
+            System.out.println("Данные метки:");
             System.out.println("ID: " + label.getId());
-            System.out.println("Name: " + label.getName());
+            System.out.println("Название: " + label.getName());
         } else {
-            System.out.println("Label not found.");
+            System.out.println("Метка не найдена.");
         }
     }
 }
