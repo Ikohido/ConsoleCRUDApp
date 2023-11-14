@@ -14,9 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PostRepository implements GenericInterface<Post, Integer> {
-    private String fileName;
-    private Gson gson = new Gson();
-    private List<Post> posts;
+    private final String fileName;
+    private final Gson gson = new Gson();
 
     public PostRepository(String fileName) {
         this.fileName = fileName;

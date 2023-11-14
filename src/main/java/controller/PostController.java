@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public class PostController {
-    private PostRepository postRepository = new PostRepository("src/main/resources/posts.json");
-    private PostView postView = new PostView();
+    private final PostRepository postRepository = new PostRepository("src/main/resources/posts.json");
+    private final PostView postView = new PostView();
 
 
     public void createPost(int id, String content, List<Label> labels) {

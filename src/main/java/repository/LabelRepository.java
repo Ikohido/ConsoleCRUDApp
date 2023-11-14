@@ -31,7 +31,6 @@ public class LabelRepository implements GenericInterface<Label, Integer> {
         } catch (NullPointerException n) {
             System.out.println("Метка отсутствует");
         }
-
         return null;
     }
 
@@ -50,11 +49,12 @@ public class LabelRepository implements GenericInterface<Label, Integer> {
         label.setId(maxId + 1);
         labels.add(label);
         saveAllLabels(labels);
+        System.out.println("Label создан: " + label);
         return label;
     }
 
     @Override
-    public Label update(Label label) {
+    public Label update(Label label) throws NullPointerException {
         List<Label> labels = getAllLabels();
         for (int i = 0; i < labels.size(); i++) {
             if (labels.get(i).getId() == label.getId()) {

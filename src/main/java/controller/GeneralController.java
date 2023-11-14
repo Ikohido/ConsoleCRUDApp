@@ -1,13 +1,16 @@
 package controller;
 
+import repository.LabelRepository;
+import repository.WriterRepository;
+
 import java.util.Scanner;
 
 public class GeneralController {
-    static PostController postController = new PostController();
-    static LabelController labelController = new LabelController();
-    static WriterController writerController = new WriterController();
+    private final PostController postController = new PostController();
+    private final LabelController labelController = new LabelController(new LabelRepository("src/main/resources/labels.json"));
+    private final WriterController writerController = new WriterController(new WriterRepository("src/main/resources/writers.json"));
 
-    public static void activateGeneralController() {
+    public void activateGeneralController() {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             try {
@@ -20,20 +23,14 @@ public class GeneralController {
                 int choice = scanner.nextInt();
                 scanner.nextLine();
                 switch (choice) {
-                    case 1:
-                        labelController.activateLabelController();
-                        break;
-                    case 2:
-                        postController.activatePostController();
-                        break;
-                    case 3:
-                        writerController.activateWriterController();
-                        break;
-                    case 0:
+                    case 1 -> labelController.activateLabelController();
+                    case 2 -> postController.activatePostController();
+                    case 3 -> writerController.activateWriterController();
+                    case 0 -> {
                         System.out.println("Выход из программы.");
                         return;
-                    default:
-                        System.out.println("Некорректный выбор. Пожалуйста, выберите существующую опцию.");
+                    }
+                    default -> System.out.println("Некорректный выбор. Пожалуйста, выберите существующую опцию.");
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);

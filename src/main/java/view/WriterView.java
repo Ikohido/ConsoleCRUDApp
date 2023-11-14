@@ -6,8 +6,6 @@ import model.Writer;
 import java.util.List;
 
 public class WriterView {
-
-
     public void showAllWriters(List<Writer> writers) throws NullPointerException {
         System.out.println("Список всех писателей:");
         for (Writer writer : writers) {
